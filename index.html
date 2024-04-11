@@ -1,35 +1,41 @@
 <!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta charset="iso-8859-1">
-        <meta name="description" content="Noticias Tecnologicas actualizadas de Cuba y del Mundo">
-        <title>TecnoDay</title>
-        <style>
-            body {
-                text-align: center;
-                background-color: rgb(46, 34, 88);
-            }
-            nav {
-                text-align: center;
-                font-size: 15px;
-            }
-            button {
-                color: chocolate;
-                background-color: rgb(61, 40, 119);
-            }
-            header {
-                background-color: darkslateblue;
-            }
-        </style>
-    </head>
-    <body>
-        <header>
-            <h1>TecnoDay</h1>
-        </header>
-        <nav>
-            <hr>
-            <button>Preguntas Frecuentes</button><button>Sobre Nosotros</button><button>Contacto</button>
-            <hr>
-        </nav>
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Videos</title>
+</head>
+<body>
+    <div id="catalogo"></div>
+
+    <script>
+        // Leer el archivo de texto
+        fetch('')
+            .then(response => response.text())
+            .then(data => {
+                // Obtener los nombres de los videos
+                const nombresVideos = data.split('\n');
+
+                // Llamar a la API de OMDb para obtener las imágenes de los videos
+                nombresVideos.forEach(nombre => {
+                    fetch(`http://www.omdbapi.com/?apikey=cea797ec&t=${nombre}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const videoImgUrl = data.Poster;
+                            const videoDiv = document.createElement('div');
+                            const videoImg = document.createElement('img');
+                            videoImg.src = videoImgUrl !== 'N/A' ? videoImgUrl : 'imagen_default.jpg';
+                            const videoNombre = document.createElement('p');
+                            videoNombre.textContent = data.Title;
+
+                            videoDiv.appendChild(videoImg);
+                            videoDiv.appendChild(videoNombre);
+                            document.getElementById('catalogo').appendChild(videoDiv);
+                        })
+                        .catch(error => console.error('Error al obtener imagen del video:', error));
+                });
+            })
+            .catch(error => console.error('Error al leer el archivo:', error));
+    </script>
+</body>
 </html>
