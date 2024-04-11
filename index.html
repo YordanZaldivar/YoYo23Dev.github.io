@@ -19,26 +19,35 @@
   </style>
 </head>
 <body>
+  <div>
+    <label for="peliculas">Ingresa los nombres de las películas (separados por comas):</label>
+    <input type="text" id="peliculas" />
+    <button onclick="buscarPeliculas()">Buscar</button>
+  </div>
   <div id="collage"></div>
 
   <script>
     const apiKey = 'cea797ec'; // Reemplaza 'tu_api_key_de_OMDb' con tu clave de API de OMDb
 
-    const peliculas = ['pelicula1', 'pelicula2', 'pelicula3', 'pelicula4', 'pelicula5', 'pelicula6', 'pelicula7', 'pelicula8', 'pelicula9']; // Reemplaza con los nombres de las películas que desees
+    function buscarPeliculas() {
+      const collage = document.getElementById('collage');
+      collage.innerHTML = ''; // Limpiar collage anterior
 
-    const collage = document.getElementById('collage');
+      const inputPeliculas = document.getElementById('peliculas').value;
+      const peliculas = inputPeliculas.split(',').map(pelicula => pelicula.trim());
 
-    peliculas.forEach(pelicula => {
-      fetch(`http://www.omdbapi.com/?apikey=${apiKey}&t=${pelicula}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.Poster !== 'N/A') {
-            const img = document.createElement('img');
-            img.src = data.Poster;
-            collage.appendChild(img);
-          }
-        });
-    });
+      peliculas.forEach(pelicula => {
+        fetch(`http://www.omdbapi.com/?apikey=${apiKey}&t=${pelicula}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.Poster !== 'N/A') {
+              const img = document.createElement('img');
+              img.src = data.Poster;
+              collage.appendChild(img);
+            }
+          });
+      });
+    }
   </script>
 </body>
 </html>
