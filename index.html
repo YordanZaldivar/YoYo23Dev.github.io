@@ -6,36 +6,47 @@
     <title>Catálogo de Videos</title>
 </head>
 <body>
+    <input type="text" id="buscador" placeholder="Buscar video...">
+    <button onclick="buscarVideo()">Buscar</button>
     <div id="catalogo"></div>
 
     <script>
-        // Leer el archivo de texto
-        fetch('https://YoYo23Dev.github.io/informacion_completa.txt')
-            .then(response => response.text())
-            .then(data => {
-                // Obtener los nombres de los videos
-                const nombresVideos = data.split('\n');
+        function buscarVideo() {
+            const textoBuscado = document.getElementById('buscador').value.toLowerCase();
+            
+            // Leer el archivo de texto
+            fetch('https://YoYo23Dev.github.io/informacion_completa.txt')
+                .then(response => response.text())
+                .then(data => {
+                    // Obtener los nombres de los videos
+                    const nombresVideos = data.split('\n');
 
-                // Llamar a la API de OMDb para obtener las imágenes de los videos
-                nombresVideos.forEach(nombre => {
-                    fetch(`http://www.omdbapi.com/?apikey=cea797ec&t=${nombre}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            const videoImgUrl = data.Poster;
-                            const videoDiv = document.createElement('div');
-                            const videoImg = document.createElement('img');
-                            videoImg.src = videoImgUrl !== 'N/A' ? videoImgUrl : 'imagen_default.jpg';
-                            const videoNombre = document.createElement('p');
-                            videoNombre.textContent = data.Title;
+                    // Buscar el video por texto
+                    const videoEncontrado = nombresVideos.find(nombre => nombre.toLowerCase().includes(textoBuscado));
+                    
+                    if (videoEncontrado) {
+                        fetch(`http://www.omdbapi.com/?apikey=cea797ec&t=${videoEncontrado}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const videoImgUrl = data.Poster;
+                                const videoDiv = document.createElement('div');
+                                const videoImg = document.createElement('img');
+                                videoImg.src = videoImgUrl !== 'N/A' ? videoImgUrl : 'imagen_default.jpg';
+                                const videoNombre = document.createElement('p');
+                                videoNombre.textContent = data.Title;
 
-                            videoDiv.appendChild(videoImg);
-                            videoDiv.appendChild(videoNombre);
-                            document.getElementById('catalogo').appendChild(videoDiv);
-                        })
-                        .catch(error => console.error('Error al obtener imagen del video:', error));
-                });
-            })
-            .catch(error => console.error('Error al leer el archivo:', error));
+                                videoDiv.appendChild(videoImg);
+                                videoDiv.appendChild(videoNombre);
+                                document.getElementById('catalogo').innerHTML = '';
+                                document.getElementById('catalogo').appendChild(videoDiv);
+                            })
+                            .catch(error => console.error('Error al obtener imagen del video:', error));
+                    } else {
+                        document.getElementById('catalogo').innerHTML = 'Video no encontrado';
+                    }
+                })
+                .catch(error => console.error('Error al leer el archivo:', error));
+        }
     </script>
 </body>
 </html>
