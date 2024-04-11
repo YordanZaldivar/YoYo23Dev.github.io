@@ -1,116 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Videos</title>
-    <style>
-        #catalogo {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collage de películas</title>
+  <style>
+    #collage {
+      display: flex;
+      flex-wrap: wrap;
+    }
 
-        .video {
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-        }
-
-        .video img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
-
-        .video p {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        #buscador {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        #buscador input[type="text"] {
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            width: 200px;
-        }
-
-        #buscador input[type="submit"] {
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-        }
-    </style>
+    #collage img {
+      width: 100px;
+      height: 150px;
+      object-fit: cover;
+      margin: 5px;
+    }
+  </style>
 </head>
 <body>
-    <div id="buscador">
-        <form id="searchForm">
-            <input type="text" id="searchInput" placeholder="Buscar videos..">
-            <input type="submit" value="Buscar">
-        </form>
-    </div>
-    <div id="catalogo"></div>
+  <div id="collage"></div>
 
-    <script>
-        document.getElementById('searchForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            
-            // Realizar la solicitud a la API de OMDb
-            fetch(`http://www.omdbapi.com/?apikey=cea797ec&s=${searchTerm}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Limpiar el catálogo antes de mostrar los nuevos resultados
-                    document.getElementById('catalogo').innerHTML = '';
-                    
-                    // Mostrar los resultados de la API de OMDb
-                    if (data.Search) {
-                        data.Search.forEach(result => {
-                            const videoDiv = document.createElement('div');
-                            videoDiv.classList.add('video');
-        
-                            const title = document.createElement('p');
-                            title.textContent = result.Title;
-                            videoDiv.appendChild(title);
-        
-                            const poster = document.createElement('img');
-                            poster.src = result.Poster;
-                            videoDiv.appendChild(poster);
-        
-                            document.getElementById('catalogo').appendChild(videoDiv);
-                        });
-                    } else {
-                        alert('No se encontraron resultados en la API de OMDb.');
-                    }
-                });
+  <script>
+    const apiKey = 'cea797ec'; // Reemplaza 'tu_api_key_de_OMDb' con tu clave de API de OMDb
 
-            // Leer el contenido del archivo .txt
-            const fileContent = "https://yoyo23dev.github.io/informacion_completa.txt"; // Reemplazar con el contenido real del archivo
+    const peliculas = ['pelicula1', 'pelicula2', 'pelicula3', 'pelicula4', 'pelicula5', 'pelicula6', 'pelicula7', 'pelicula8', 'pelicula9']; // Reemplaza con los nombres de las películas que desees
 
-            // Realizar la búsqueda en el contenido del archivo .txt
-            const videos = document.querySelectorAll('.video');
-            videos.forEach(video => {
-                const title = video.querySelector('p').textContent.toLowerCase();
-                if (fileContent.includes(searchTerm) && title.includes(searchTerm)) {
-                    video.style.display = 'block';
-                } else {
-                    video.style.display = 'none';
-                }
-            });
+    const collage = document.getElementById('collage');
 
-            if (!fileContent.includes(searchTerm)) {
-                alert('No se encontraron resultados en el archivo.');
-            }
+    peliculas.forEach(pelicula => {
+      fetch(`http://www.omdbapi.com/?apikey=${apiKey}&t=${pelicula}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.Poster !== 'N/A') {
+            const img = document.createElement('img');
+            img.src = data.Poster;
+            collage.appendChild(img);
+          }
         });
-    </script>
+    });
+  </script>
 </body>
 </html>
